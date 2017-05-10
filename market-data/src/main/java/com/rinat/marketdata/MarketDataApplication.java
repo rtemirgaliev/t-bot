@@ -1,12 +1,22 @@
 package com.rinat.marketdata;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+
+import java.applet.AppletContext;
 
 @SpringBootApplication
 public class MarketDataApplication {
 
+	@Autowired
+	OandaStreamingService oandaStreamingService;
+
 	public static void main(String[] args) {
-		SpringApplication.run(MarketDataApplication.class, args);
+		ConfigurableApplicationContext context = SpringApplication.run(MarketDataApplication.class, args);
+
+		context.getBean(OandaStreamingService.class).startMarketDataStreaming();
 	}
 }
