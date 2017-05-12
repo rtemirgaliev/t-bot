@@ -5,3 +5,8 @@ provider:
     instruments: instruments=EUR_USD
     token: 0b401ca1950dc6078b8805d903a3b7f7-228a67e3d766c8faf7ebaae633a96637
 
+spring:
+  kafka:
+    consumer:
+      group-id: foo
+      auto-offset-reset: earliest

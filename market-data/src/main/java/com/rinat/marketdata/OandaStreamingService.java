@@ -11,8 +11,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +33,10 @@ public class OandaStreamingService {
     protected Thread streamThread;
 
     @Autowired
-    Environment env;
+    private Environment env;
+
+    @Autowired
+    private KafkaProducerService kafkaProducerService;
 
 
 
@@ -81,17 +82,20 @@ public class OandaStreamingService {
                     if (br != null) {
                         String line;
                         while ( (line = br.readLine())!=null && serviceUp ) {
-                            JsonNode node = mapper.readValue(line, JsonNode.class);
-                            String messageType = node.get("type").asText();
-                            System.out.println("Type: " + messageType);
 
-                            if ("PRICE".equals(messageType)) {
-                                JsonNode bidsNode = node.get("bids");
-                                JsonNode asksNode = node.get("asks");
-                                String bid = bidsNode.get(0).get("price").asText();
-                                String asc = asksNode.get(0).get("price").asText();
-                                System.out.println(asc + " " + bid);
-                            }
+                            kafkaProducerService.sendStringToTopic("test", line);
+
+//                            JsonNode node = mapper.readValue(line, JsonNode.class);
+//                            String messageType = node.get("type").asText();
+//                            System.out.println("Type: " + messageType);
+//
+//                            if ("PRICE".equals(messageType)) {
+//                                JsonNode bidsNode = node.get("bids");
+//                                JsonNode asksNode = node.get("asks");
+//                                String bid = bidsNode.get(0).get("price").asText();
+//                                String asc = asksNode.get(0).get("price").asText();
+//                                System.out.println(asc + " " + bid);
+//                            }
 
                         }
                         br.close();
